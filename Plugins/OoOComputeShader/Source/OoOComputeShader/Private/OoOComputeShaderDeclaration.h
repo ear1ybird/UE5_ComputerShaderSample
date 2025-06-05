@@ -104,3 +104,24 @@ public:
 	UTexture2D* InputTexture;
 	float Seed;
 };
+
+UCLASS()
+class UComputeBlueprintLibrary : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "ComputeShader|Demo")
+	static void InvertColors(
+		UTexture2D* InputTexture,
+		UTextureRenderTarget2D* RenderTarget,
+		float Seed) 
+	{
+		FOoOCSParameters Parameters(RenderTarget->SizeX, RenderTarget->SizeY, 1);
+		Parameters.InputTexture = InputTexture;
+		Parameters.RenderTarget = RenderTarget->GameThread_GetRenderTargetResource();
+		Parameters.Seed = Seed;
+
+		FOoOComputeShaderInterface::Dispatch(Parameters);
+	}
+};
